@@ -11,9 +11,12 @@ from sdk import ApiClient
 
 USE_HTTPS = True
 
-API_HOST = 'bw-test-api.btcdo.org'
-API_KEY = 'AAAAAYax9qOFYqfPJ2R27f5Eg629bJt3'
-API_SECRET = 'n6qKwe7teNH8udkJShyP'
+#endpoint无需写https
+API_HOST = 'onapi.btcdo.com'
+#登录Btcdo账户，在“个人中心”→“安全中心”获取API-KEY和API-SECRET
+API_KEY = '您的APIKEY'
+API_SECRET = '您的APISECRET'
+
 
 def main():
     host = API_HOST
@@ -27,22 +30,45 @@ def main():
             key = arg[5:]
         if arg.startswith('-secret='):
             secret = arg[8:]
-    t = threading.Thread(target=lambda: do_jobs(host, key, secret, https))
-    t.start()
+    #t = threading.Thread(target=lambda: do_query(host, key, secret, https))
+    #t.start()
+    createOrder(host, key, secret, https)
+    queryOrder(host, key, secret, https)
+    queryCurrency(host, key, secret, https)
 
-def do_jobs(host, key, secret, https):
+#需要签名的post请求 创建订单
+def createOrder(host, key, secret, https):
     client = ApiClient(key, secret, host, https)
     try:
         r = client.post('/v1/trade/orders', {
-        'orderType': 'BUY_LIMIT',
-        'symbol': 'BDB_BTC',
-        'amount': 108,
-        'price': 0.00000678,
+        'orderType': 'SELL_LIMIT',
+        'symbol': 'BDB_ETH',
+        'amount': 100,
+        'price': 1.00000678,
         'features': 65536
         })
         print('place %s ok? %s' % ('~~~ create orders response ~~~', success(r)))
     except Exception as e:
         print(e)
+        
+#需要签名的get请求 获取最近交易记录
+def queryOrder(host, key, secret, https):
+    client = ApiClient(key, secret, host, https)
+    try:
+        r = client.get('/v1/trade/orders')
+        print('place %s ok? %s' % ('~~~ get orders response ~~~', success(r)))
+    except Exception as e:
+        print(e)
+
+#无需签名的get请求 获取所有币种信息
+def queryCurrency(host, key, secret, https):
+    client = ApiClient(key, secret, host, https)
+    try:
+        r = client.get('/v1/common/currencies')
+        print('place %s ok? %s' % ('~~~ get currency response ~~~', success(r)))
+    except Exception as e:
+        print(e)
+
 
 def success(result):
     return not hasattr(result, 'error')
