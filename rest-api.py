@@ -12,7 +12,7 @@ from sdk import ApiClient
 USE_HTTPS = True
 
 #endpoint无需写https
-API_HOST = 'onapi.btcdo.com'
+API_HOST = 'api.btcdo.com'
 #登录Btcdo账户，在“个人中心”→“安全中心”获取API-KEY和API-SECRET
 API_KEY = '您的APIKEY'
 API_SECRET = '您的APISECRET'
